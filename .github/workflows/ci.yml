@@ -1,0 +1,26 @@
+# CI pipeline for the GMC Lanka integration test suites
+#
+# The stages (lint and format check, backend and frontend integration tests) are defined in the
+# infra repository:
+#   https://github.com/test-gmc-lanka/infra/blob/main/.github/workflows/tests-ci.yml
+# This file only decides when the pipeline runs.
+name: Tests CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [develop, main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    name: Pipeline
+    uses: test-gmc-lanka/infra/.github/workflows/tests-ci.yml@main
